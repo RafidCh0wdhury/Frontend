@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.sidebar-menu {
+    display: flex;              /* flex */
+    align-items: center;        /* items-center */
+    justify-content: center;
+    gap: 4px;    /* justify-center */
+    padding-top: 12px;          /* py-3 (padding-y) */
+    padding-bottom: 12px;       /* py-3 */
+    cursor: pointer; 
+    transition: background-color 0.3s ease;
+}
+.sidebar-menu:hover {
+    color: white;
+    background-color: #3e79e7; /* A shiny yellow (like sparky gold) */
+    background-image: linear-gradient(45deg, #4f7fe7, #88a3ed, #a3c3ef); /* Gradient effect */
+}
+  

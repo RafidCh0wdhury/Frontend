@@ -2,37 +2,27 @@
 import axios from "axios";
 import Select from "react-select";
 import { useEffect, useState } from "react";
-import Add from "../../component/icons/Add";
 import { useRouter } from "next/navigation";
 import "react-toastify/dist/ReactToastify.css";
-import BackButton from "../../component/BackButton";
-import Download from "../../component/icons/Download";
 import { ToastContainer, toast } from "react-toastify";
-
-const options = {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: true,
-};
+import BackButton from "../../component/BackButton";
+import Delete from "../../component/icons/Delete";
 
 const optionsClass = [
   { value: "CIT 160", label: "CIT 160" },
   { value: "IS 441", label: "IS 441" },
 ];
 
-const Notes = () => {
+const MyList = () => {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [files, setFiles] = useState([]);
   const [renderedFiles, setRenderedFiles] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedClass, setSelectedClass] = useState({
     value: null,
     label: null,
   });
-  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const details = localStorage.getItem("userDetails");
@@ -48,14 +38,19 @@ const Notes = () => {
   useEffect(() => {
     // Only fetch resources if user is set
     if (user) {
-      fetchMyResources();
+      fetchMyList();
     }
   }, [user]);
 
-  const fetchMyResources = async () => {
+  useEffect(() => {
+    handleSearch({ target: { value: searchTerm } });
+  }, [selectedClass]);
+
+  const fetchMyList = async () => {
     const response = await axios.get(
-      `http://localhost:3002/all-resources/${user?.id}`
+      `http://localhost:3002/get-my-list/${user?.id}`
     );
+
     if (response.data) {
       setFiles(response.data);
       setRenderedFiles(response.data);
@@ -71,33 +66,6 @@ const Notes = () => {
     // Open the file URL in a new tab or prompt the download
     window.open(filePath, "_blank");
   };
-
-  const handelAddToList = async (resourceId) => {
-    const data = {
-      userId: user.id,
-      resourceId,
-    };
-
-    console.log(data);
-
-    try {
-      const response = await fetch("http://localhost:3002/add-to-list", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data), // Ensure this is stringified
-      });
-
-      toast("Added to your list!");
-    } catch (error) {
-      console.error("Error Adding to list", error);
-    }
-  };
-
-  useEffect(() => {
-    handleSearch({ target: { value: searchTerm } });
-  }, [selectedClass]);
 
   const handleChange = (selectedOption) => {
     // console.log(selectedOption.value);
@@ -129,7 +97,7 @@ const Notes = () => {
     }
   };
 
-  if (!user) return null;
+  const handleDelete = () => {};
 
   return (
     <div className="p-5">
@@ -189,28 +157,14 @@ const Notes = () => {
               className="mb-3 border border-gray-300 shadow-md p-3 rounded-md flex items-center justify-between"
             >
               <div>
-                <p>Resource Name: {item.resourceName}</p>
-                <p>Class: {item.resourceClass}</p>
-                <p>
-                  Uploaded by{" "}
-                  <span className="font-semibold">{item.user.name}</span>
-                </p>
-                <p>Uploaded time: {formatTime(item.createdAt)}</p>
+                <p>Resource Name: {item.resource.resourceName}</p>
+                <p>Class: {item.resource.resourceClass}</p>
               </div>
-
-              <div className="flex items-center space-x-5">
-                <div
-                  className="w-fit cursor-pointer"
-                  onClick={() => handelAddToList(item.id)}
-                >
-                  <Add />
-                </div>
-                <div
-                  className="w-fit cursor-pointer"
-                  onClick={() => handleDownload(item.resourcePath)}
-                >
-                  <Download />
-                </div>
+              <div
+                className="w-fit cursor-pointer"
+                onClick={() => handleDelete(item.id)}
+              >
+                <Delete />
               </div>
             </li>
           ))}
@@ -220,4 +174,4 @@ const Notes = () => {
   );
 };
 
-export default Notes;
+export default MyList;
