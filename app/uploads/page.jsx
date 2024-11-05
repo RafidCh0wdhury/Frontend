@@ -26,15 +26,13 @@ const Upload = () => {
     series: [0, 0],
     options: {
       chart: { width: 380, height: 380, type: "pie" },
-      plotOptions: {
-        pie: {
-          customScale: 0.8,
-          dataLabels: {
-            offset: -20,
-          },
+      labels: ["CIT 160", "IS 441"],
+      legend: {
+        labels: {
+          position: "bottom",
+          colors: "#FFFFFF", // Desired color for legend labels
         },
       },
-      labels: ["CIT 160", "IS 441"],
       responsive: [
         {
           breakpoint: 480,
@@ -114,7 +112,7 @@ const Upload = () => {
       </div>
       <div className="grid grid-cols-6">
         <div className="col-span-4">
-          <h2 className="text-sm italic text-gray-400 mb-2">
+          <h2 className="text-sm italic mb-2">
             {files.length === 1 ? "1 file" : `${files.length} files`} found
           </h2>
           <ul>

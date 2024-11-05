@@ -165,7 +165,7 @@ export default function Signup() {
           </button>
         </form>
 
-        <p className="mt-2 text-sm italic text-center text-gray-500 text-white">
+        <p className="mt-2 text-sm italic text-center text-white">
           Already have an account?
           <Link href="/auth/login" className="underline">
             Login
