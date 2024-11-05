@@ -1,12 +1,14 @@
 // pages/home.tsx
 "use client";
 
-import Link from "next/link";
+import Select from "react-select";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Select from "react-select";
+import { toast, ToastContainer } from "react-toastify";
+import withBasicAuth from "../../component/withBasicAuth";
+import ReactApexChart from "react-apexcharts";
+import axios from "axios";
 
 const options = [
   { value: "CIT 160", label: "CIT 160" },
@@ -20,6 +22,23 @@ const Home = () => {
   const [fileName, setFileName] = useState("");
   const [classFile, setClassFile] = useState({});
 
+  const [chartOptions, setChartOptions] = useState({
+    series: [0, 0, 0],
+    options: {
+      chart: { width: 500, height: 500, type: "pie" },
+
+      labels: ["Total Resources", "My Resources", "My List Resources"],
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: { width: 200 },
+          },
+        },
+      ],
+    },
+  });
+
   useEffect(() => {
     const details = localStorage.getItem("userDetails");
 
@@ -29,7 +48,30 @@ const Home = () => {
       const userDetails = JSON.parse(details);
       setUser(userDetails);
     }
-  }, [router]);
+  }, []);
+
+  useEffect(() => {
+    fetchResourcesCount();
+  }, [user]);
+
+  const fetchResourcesCount = async () => {
+    if (user?.id) {
+      const result = await axios.get(
+        `http://localhost:3002/resources-count/${user.id}`
+      );
+
+      const counts = result.data;
+
+      setChartOptions((prevOptions) => ({
+        ...prevOptions,
+        series: [
+          counts.allResources,
+          counts.myResources,
+          counts.myListResources,
+        ],
+      }));
+    }
+  };
 
   const handleChange = (selectedOption) => {
     setClassFile(selectedOption);
@@ -40,8 +82,6 @@ const Home = () => {
       setFile(e.target.files[0]);
     }
   };
-
-  console.log(classFile);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -78,15 +118,35 @@ const Home = () => {
   if (!user) return null;
 
   return (
-    <div className="">
-      <h1 className="font-bold text-xl text-center mb-10">
+    <div>
+      <h1 className="font-bold text-2xl text-center mb-10">
         Welcome {user?.name}!
       </h1>
-      <div>
-        <form
-          onSubmit={handleSubmit}
-          className="max-w-2xl mx-auto p-4 border border-gray-200 rounded-md"
-        >
+      <div className="bg-[#e3decc] flex flex-col rounded-lg p-4 shadow-md">
+        <div className="flex justify-between items-center">
+          <div className="w-[50%]">
+            <ReactApexChart
+              options={chartOptions.options}
+              series={chartOptions.series}
+              type="donut"
+              width={380}
+            />
+          </div>
+          <div className="w-[50%] flex justify-between rounded-md">
+            <div className="flex flex-col font-semibold gap-y-2">
+              <label>Total Resources</label>
+              <label>My Uploads</label>
+              <label>My List Resources</label>
+            </div>
+            <div className="flex flex-col gap-y-2">
+              <span>{chartOptions?.series[0]}</span>
+              <span>{chartOptions?.series[1]}</span>
+              <span>{chartOptions?.series[2]}</span>
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="ml-2 p-4 rounded-md">
           <h2 className="text-center text-xl font-semibold mb-5">
             Upload your notes!
           </h2>
@@ -117,7 +177,7 @@ const Home = () => {
             <input type="file" onChange={handleFileChange} />
             <button
               type="submit"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="mx-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-fit px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Submit
             </button>
@@ -129,4 +189,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default withBasicAuth(Home);

@@ -49,65 +49,70 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center h-screen">
-      <div className="w-[70%] md:w-[55%] sm:w-[50%] lg:w-[40%] mx-auto">
-        <h1 className="text-center font-bold text-2xl mb-3">Login</h1>
-        <form
-          className="flex flex-col space-y-5 w-full"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <div>
-            <label
-              htmlFor="email"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Email address
-            </label>
-            <input
-              {...register("email")}
-              type="email"
-              id="email"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="email"
-            />
-            {errors.email && (
-              <div className="text-red-500">{errors.email.message}</div>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Password
-            </label>
-            <input
-              {...register("password")}
-              type="password"
-              id="password"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="•••••••••"
-            />
-            {errors.password && (
-              <div className="text-red-500">{errors.password.message}</div>
-            )}
-          </div>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="text-white py-2.5 bg-[#301934] hover:bg-white hover:border hover:border-[#301934] hover:text-black font-medium rounded-lg text-sm text-center"
+    <div className="flex flex-col space-y-28">
+      <h1 className="text-4xl w-fit mx-auto mt-4">Resource Exchange</h1>
+      <div className="flex items-center justify-center">
+        <div className="w-[50%]">
+          <h1 className="text-center font-bold text-2xl mb-3 text-white">
+            Login
+          </h1>
+          <form
+            className="flex flex-col space-y-5 w-full"
+            onSubmit={handleSubmit(onSubmit)}
           >
-            {isSubmitting ? "Submitting..." : "Login"}
-          </button>
-        </form>
+            <div>
+              <label
+                htmlFor="email"
+                className="block mb-2 text-sm text-white font-medium text-gray-900 dark:text-white"
+              >
+                Email address
+              </label>
+              <input
+                {...register("email")}
+                type="email"
+                id="email"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="email"
+              />
+              {errors.email && (
+                <div className="text-red-500">{errors.email.message}</div>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="password"
+                className="block mb-2 text-white text-sm font-medium"
+              >
+                Password
+              </label>
+              <input
+                {...register("password")}
+                type="password"
+                id="password"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="•••••••••"
+              />
+              {errors.password && (
+                <div className="text-red-500">{errors.password.message}</div>
+              )}
+            </div>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="text-white py-2.5 bg-[#301934] hover:bg-white hover:border hover:border-[#301934] hover:text-black font-medium rounded-lg text-sm text-center"
+            >
+              {isSubmitting ? "Submitting..." : "Login"}
+            </button>
+          </form>
 
-        <p className="mt-2 text-sm italic text-center text-gray-500">
-          Dont't have an account?{" "}
-          <Link href="/auth/signup" className="underline">
-            Sign up
-          </Link>
-        </p>
-        <ToastContainer />
+          <p className="mt-2 text-sm italic text-center text-white">
+            Dont't have an account?{" "}
+            <Link href="/auth/signup" className="underline">
+              Sign up
+            </Link>
+          </p>
+          <ToastContainer />
+        </div>
       </div>
     </div>
   );

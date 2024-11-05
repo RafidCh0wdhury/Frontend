@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import BackButton from "../../component/BackButton";
 import Download from "../../component/icons/Download";
 import { ToastContainer, toast } from "react-toastify";
+import withBasicAuth from "../../component/withBasicAuth";
 
 const options = {
   year: "numeric",
@@ -136,7 +137,6 @@ const Notes = () => {
       <div className="flex justify-end">
         <BackButton />
       </div>
-
       <div className="flex justify-between items-centers">
         <div className="w-[30%]">
           <div className="relative w-full">
@@ -181,12 +181,12 @@ const Notes = () => {
         </div>
       </div>
 
-      <ul className="min-w-[45%] mx-auto">
+      <ul>
         {renderedFiles.length > 0 &&
           renderedFiles.map((item) => (
             <li
               key={item.id}
-              className="mb-3 border border-gray-300 shadow-md p-3 rounded-md flex items-center justify-between"
+              className="bg-[#eee5c6] mb-3 border border-gray-300 shadow-md p-3 rounded-md flex items-center justify-between"
             >
               <div>
                 <p>Resource Name: {item.resourceName}</p>
@@ -220,4 +220,4 @@ const Notes = () => {
   );
 };
 
-export default Notes;
+export default withBasicAuth(Notes);

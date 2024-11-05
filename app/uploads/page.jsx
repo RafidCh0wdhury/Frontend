@@ -1,10 +1,12 @@
 "use client";
 import axios from "axios";
-import Image from "next/image";
 import { useEffect, useState } from "react";
-import FileIcon from "../../images/file.svg";
+import Download from "../../component/icons/Download";
+import Delete from "../../component/icons/Delete";
 import { useRouter } from "next/navigation";
 import BackButton from "../../component/BackButton";
+import withBasicAuth from "../../component/withBasicAuth";
+import ReactApexChart from "react-apexcharts";
 
 const options = {
   year: "numeric",
@@ -19,6 +21,31 @@ const Upload = () => {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [files, setFiles] = useState([]);
+
+  const [classBasedChartOptions, setClassBasedChartOptions] = useState({
+    series: [0, 0],
+    options: {
+      chart: { width: 380, height: 380, type: "pie" },
+      plotOptions: {
+        pie: {
+          customScale: 0.8,
+          dataLabels: {
+            offset: -20,
+          },
+        },
+      },
+      labels: ["CIT 160", "IS 441"],
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: { width: 200 },
+            legend: { position: "bottom" },
+          },
+        },
+      ],
+    },
+  });
 
   useEffect(() => {
     const details = localStorage.getItem("userDetails");
@@ -35,14 +62,34 @@ const Upload = () => {
     // Only fetch resources if user is set
     if (user) {
       fetchMyResources();
+      fetchResourcesCount();
     }
   }, [user]);
+
+  const fetchResourcesCount = async () => {
+    if (user?.id) {
+      const result = await axios.get(
+        `http://localhost:3002/resources-count/${user.id}`
+      );
+
+      const counts = result.data;
+
+      setClassBasedChartOptions((prev) => ({
+        ...prev,
+        series: [
+          counts.resourcesByClassCount[0].count,
+          counts.resourcesByClassCount[1].count,
+        ],
+      }));
+    }
+  };
 
   const fetchMyResources = async () => {
     const response = await axios.get(
       `http://localhost:3002/my-resources/${user?.id}`
     );
     if (response.data) {
+      console.log(response.data);
       setFiles(response.data);
     }
   };
@@ -56,36 +103,61 @@ const Upload = () => {
     window.open(filePath, "_blank");
   };
 
+  const handleDelete = () => {};
+
   if (!user) return null;
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center">
-      <ul className="min-w-[45%] mx-auto">
-        {files.length > 0 &&
-          files.map((item) => (
-            <li
-              key={item.id}
-              onClick={() => handleDownload(item.filePath)}
-              className="cursor-pointer mb-3 border border-gray-300 shadow-md p-3 rounded-md flex items-center justify-between"
-            >
-              <div>
-                <p>File Name: {item.fileName}</p>
-                <p>Uploaded time: {formatTime(item.createdAt)}</p>
-              </div>
+    <div className="p-5">
+      <div className="flex justify-end">
+        <BackButton />
+      </div>
+      <div className="grid grid-cols-6">
+        <div className="col-span-4">
+          <h2 className="text-sm italic text-gray-400 mb-2">
+            {files.length === 1 ? "1 file" : `${files.length} files`} found
+          </h2>
+          <ul>
+            {files.length > 0 &&
+              files.map((item) => (
+                <li
+                  key={item.id}
+                  className="bg-[#eee5c6] mb-3 border border-gray-300 shadow-md p-3 rounded-md flex items-center justify-between"
+                >
+                  <div>
+                    <p>File Name: {item.resourceName}</p>
+                    <p>Uploaded time: {formatTime(item.createdAt)}</p>
+                  </div>
 
-              <Image
-                width={40}
-                height={40}
-                src={FileIcon}
-                alt="Download"
-                onClick={() => handleDownload(item.filePath)}
-              />
-            </li>
-          ))}
-      </ul>
-      <BackButton />
+                  <div className="flex items-center gap-x-4">
+                    <div
+                      className="w-fit cursor-pointer"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      <Delete />
+                    </div>
+                    <div
+                      className="w-fit cursor-pointer"
+                      onClick={() => handleDownload(item.resourcePath)}
+                    >
+                      <Download />
+                    </div>
+                  </div>
+                </li>
+              ))}
+          </ul>
+        </div>
+        <div className="col-span-2">
+          <ReactApexChart
+            options={classBasedChartOptions.options}
+            series={classBasedChartOptions.series}
+            type="pie"
+            width={380}
+          />
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Upload;
+export default withBasicAuth(Upload);

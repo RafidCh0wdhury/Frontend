@@ -37,11 +37,13 @@ export default function Signup() {
   useEffect(() => {
     const user = localStorage.getItem("userDetails");
 
-    if (user) {
+    console.log(user);
+
+    if (JSON.parse(user)) {
       setIsUserLoggedIn(true);
       router.push("/home");
     }
-  }, [router]);
+  }, []);
 
   const onSignupSubmit = async (data) => {
     try {
@@ -72,10 +74,7 @@ export default function Signup() {
           onSubmit={handleSubmit(onSignupSubmit)}
         >
           <div>
-            <label
-              htmlFor="name"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="name" className="block mb-2 text-sm font-medium">
               Name
             </label>
             <input
@@ -90,10 +89,7 @@ export default function Signup() {
             )}
           </div>
           <div>
-            <label
-              htmlFor="email"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="email" className="block mb-2 text-sm font-medium">
               Email address
             </label>
             <input
@@ -108,10 +104,7 @@ export default function Signup() {
             )}
           </div>
           <div>
-            <label
-              htmlFor="major"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="major" className="block mb-2 text-sm font-medium">
               Major
             </label>
             <input
@@ -172,7 +165,7 @@ export default function Signup() {
           </button>
         </form>
 
-        <p className="mt-2 text-sm italic text-center text-gray-500">
+        <p className="mt-2 text-sm italic text-center text-gray-500 text-white">
           Already have an account?
           <Link href="/auth/login" className="underline">
             Login

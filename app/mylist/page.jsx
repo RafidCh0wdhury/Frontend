@@ -7,6 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import BackButton from "../../component/BackButton";
 import Delete from "../../component/icons/Delete";
+import Download from "../../component/icons/Download";
+import withBasicAuth from "../../component/withBasicAuth";
 
 const optionsClass = [
   { value: "CIT 160", label: "CIT 160" },
@@ -52,6 +54,7 @@ const MyList = () => {
     );
 
     if (response.data) {
+      console.log(response.data);
       setFiles(response.data);
       setRenderedFiles(response.data);
     }
@@ -63,6 +66,7 @@ const MyList = () => {
   };
 
   const handleDownload = (filePath) => {
+    console.log(filePath);
     // Open the file URL in a new tab or prompt the download
     window.open(filePath, "_blank");
   };
@@ -154,17 +158,25 @@ const MyList = () => {
           renderedFiles.map((item) => (
             <li
               key={item.id}
-              className="mb-3 border border-gray-300 shadow-md p-3 rounded-md flex items-center justify-between"
+              className="bg-[#eee5c6] mb-3 border border-gray-300 shadow-md p-3 rounded-md flex items-center justify-between"
             >
               <div>
                 <p>Resource Name: {item.resource.resourceName}</p>
                 <p>Class: {item.resource.resourceClass}</p>
               </div>
-              <div
-                className="w-fit cursor-pointer"
-                onClick={() => handleDelete(item.id)}
-              >
-                <Delete />
+              <div className="flex items-center space-x-5">
+                <div
+                  className="w-fit cursor-pointer"
+                  onClick={() => handleDelete(item.id)}
+                >
+                  <Delete />
+                </div>
+                <div
+                  className="w-fit cursor-pointer"
+                  onClick={() => handleDownload(item.resource.resourcePath)}
+                >
+                  <Download />
+                </div>
               </div>
             </li>
           ))}
@@ -174,4 +186,4 @@ const MyList = () => {
   );
 };
 
-export default MyList;
+export default withBasicAuth(MyList);
